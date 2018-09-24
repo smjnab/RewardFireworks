@@ -23,7 +23,8 @@ var getClaimedRewardsTimeout; //Stores timeout for block processing to find Clai
 var blockNumText; //Text showing what block(s) are checked.
 
 document.addEventListener("keyup", OnKeyUp); //Listen for ESC to start/stop block processing.
-document.addEventListener("mouseup", OnMouseUp); //Listen for mouse/touch to start/stop block processing.
+document.addEventListener("mouseup", OnMouseUp); //Listen for mouse to start/stop block processing.
+document.addEventListener("touchstart", OnMouseUp); //Listen for touch to start/stop block processing.
 
 Init();
 
@@ -61,7 +62,7 @@ async function GetClaimedRewards() {
         if (previousBlockNum == 0) previousBlockNum = blockNum; //On first pass fetch the current block.
         else previousBlockNum += 1; //Increase one as to not fetch same block twice.
 
-        const blocks = await client.blockchain.getBlocks({ from: previousBlockNum, to: blockNum });
+        const blocks = client.blockchain.getBlocks({ from: previousBlockNum, to: blockNum });
 
         // Iterate through each block since last processed block.
         for await (const block of blocks) {
