@@ -20,6 +20,7 @@ var rate;   //Sets conversion rate of 1 SBD in Steem.
 var previousBlockNum; //Track the last block used to make fireworks.
 var stopBlockProcessing; //Stop async block iteration.
 var getClaimedRewardsTimeout; //Stores timeout for block processing to find Claimed rewards.
+var blockNumText; //Text showing what block(s) are checked.
 
 document.addEventListener("keyup", OnKeyUp); //Listen for ESC to start/stop block processing.
 document.addEventListener("mouseup", OnMouseUp); //Listen for mouse/touch to start/stop block processing.
@@ -50,6 +51,11 @@ async function GetClaimedRewards() {
     const blockNum = await client.blockchain.getCurrentBlockNum();
 
     if (blockNum != previousBlockNum) {
+        // Indicate what block(s) are processed at the moment.
+        if (blockNumText != undefined) blockNumText.destroy();
+        blockNumText = phaser.add.text(windowWidth, windowHeight - 16, "Checking Block(s): " + previousBlockNum + " - " + blockNum, { fontSize: "14px", fill: "#FFF" });
+        blockNumText.x -= blockNumText.width + 8;
+
         console.log("Processing up to block: " + blockNum);
 
         if (previousBlockNum == 0) previousBlockNum = blockNum; //On first pass fetch the current block.
