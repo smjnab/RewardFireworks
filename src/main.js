@@ -29,6 +29,9 @@ Init();
 async function Init() {
     console.log("Init");
 
+    // Remove any pause message.
+    if (waitingForClaimsText != undefined) waitingForClaimsText.destroy();
+
     price = await client.database.getCurrentMedianHistoryPrice();
     rate = price.base.amount;
     previousBlockNum = 0;
@@ -100,6 +103,11 @@ function StopBlockProcessing() {
 
     clearTimeout(getClaimedRewardsTimeout);
     stopBlockProcessing = true;
+
+    // Paused message.
+    if (waitingForClaimsText != undefined) waitingForClaimsText.destroy();
+    waitingForClaimsText = phaser.add.text(windowWidth / 2, windowHeight / 3, "Paused... ESC or Click/Touch.", { fontSize: "16px", fill: "#FFF" });
+    waitingForClaimsText.x -= waitingForClaimsText.width / 2;
 }
 
 
@@ -119,7 +127,7 @@ var config = {
     height: windowHeight,
     pixelArt: true,
     physics: {
-        default: 'arcade',
+        default: "arcade",
         arcade: {
             gravity: { y: 200 }
         }
@@ -136,14 +144,14 @@ window.addEventListener("resize", Resize);
 
 function Preload() {
     this.load.setBaseURL("fireworks_files");
-    this.load.image('white1px', 'images/white1px.png');
+    this.load.image("white1px", "images/white1px.png");
 }
 
 function Create() {
     phaser = this;
 
     // Initial waiting message
-    waitingForClaimsText = phaser.add.text(windowWidth / 2, windowHeight / 3, "Waiting for a reward claim...", { fontSize: '16px', fill: '#FFF' });
+    waitingForClaimsText = phaser.add.text(windowWidth / 2, windowHeight / 3, "Waiting for a reward claim...", { fontSize: "16px", fill: "#FFF" });
     waitingForClaimsText.x -= waitingForClaimsText.width / 2;
 }
 
@@ -162,7 +170,7 @@ function EmitterMaker(particle, particleSpeed, scaleMin, scaleMax, tint, angelMi
     return emitter = particle.createEmitter({
         speed: particleSpeed,
         scale: { start: scaleMin * 2, end: scaleMax * 2 },
-        blendMode: 'ADD',
+        blendMode: "ADD",
         tint: tint,
         alpha: {
             start: 10, end: 5
@@ -174,18 +182,6 @@ function EmitterMaker(particle, particleSpeed, scaleMin, scaleMax, tint, angelMi
     });
 }
 
-/**
- * TODO: FIX SOUND
- * ADD FAVICON AND MOBILE ICON
- * CLICK TO START (AS TO ENABLE SOUND)
- * UPLOAD TO SM.SE (MAKE MINIMIZED BUNDLE.JS!)
- * 
- * TEST MOBILE, IOS AND WEB
- * Do GIT Commit
- * Update Steem project
- * QUICK WHAT IT IS, SECTION WHY (CELEBRATE HF20) AND PROCESS, WHAT IS USED AND HOW IT WORKS. LINK SITE, GIT AND STEEM PROJECTS.
- *
- */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FIREWORKS
@@ -196,7 +192,7 @@ function FireRocket(accountName, rocketPower) {
     waitingForClaimsText.destroy();
 
     // Create a sparkling trail for rocket
-    var trail = phaser.add.particles('white1px');
+    var trail = phaser.add.particles("white1px");
 
     var sparks1 = EmitterMaker(trail, 100, 1, 0, 0xFFFFDD99, 45, 90, 500);
     var sparks2 = EmitterMaker(trail, 120, 1.2, 0, 0xFFFFAF22, 45, 90, 500);
@@ -217,7 +213,7 @@ function FireRocket(accountName, rocketPower) {
     direction *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
 
     // Create rocket and position it in the bottom center of screen.
-    var rocket = phaser.physics.add.image(1, 1, 'white1px');
+    var rocket = phaser.physics.add.image(1, 1, "white1px");
     rocket.x = windowWidth / 2 + direction / 4;
     rocket.y = windowHeight - 1;
     rocket.setVelocity(direction, -velocity);
@@ -245,7 +241,7 @@ function ExplodeRocket(rocket, trail, rocketPower, accountName) {
     ];
 
     // Text with the name of the account
-    var rocketName = phaser.add.text(rocket.x, rocket.y, accountName, { fontSize: '14px', fill: '#FFF' });
+    var rocketName = phaser.add.text(rocket.x, rocket.y, accountName, { fontSize: "14px", fill: "#FFF" });
     rocketName.tint = colorArray[parseInt(Math.random() * 10)];
     rocketName.x -= rocketName.width / 2;
 
@@ -264,7 +260,7 @@ function ExplodeRocket(rocket, trail, rocketPower, accountName) {
     }, 50);
 
     // Explosion particle
-    var explosion = phaser.add.particles('white1px');
+    var explosion = phaser.add.particles("white1px");
     explosion.x = rocket.x;
     explosion.y = rocket.y;
 
