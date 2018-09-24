@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang=en>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-title" content="Reward Fireworks">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Reward Fireworks</title>
+    <link rel="manifest" href="fireworks_files/manifest.json">
+    <link rel="apple-touch-icon" sizes="64x64" href="fireworks_files/images/fireworks_app.png">
+    <link rel="stylesheet" href="fireworks_files/main.css">
+    <link rel="icon" href="fireworks_files/images/favicon.ico">
+</head>
+
+<body>
+
+    <!-- Phaser App -->
+
+    <!-- Load Scripts -->
+    <script src="fireworks_files/bundle.js"></script>
+</body>
+
+</html>
