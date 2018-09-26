@@ -44,18 +44,26 @@ async function GetClaimedRewards() {
     const blockNum = await client.blockchain.getCurrentBlockNum();
 
     if (blockNum != previousBlockNum) {
-        // Indicate what block(s) are processed at the moment.
-        if (previousBlockNum == 0 || previousBlockNum == blockNum) document.getElementById("BlockProcess").innerHTML = "Checking Block: " + blockNum;
-        else document.getElementById("BlockProcess").innerHTML = "Checking Blocks: " + previousBlockNum + " - " + blockNum;
+        // Config starting block on the first pass.
+        if (previousBlockNum == 0) {
+            previousBlockNum = blockNum; //On first pass fetch the current block.
 
-        if (previousBlockNum == 0) previousBlockNum = blockNum; //On first pass fetch the current block.
-        else previousBlockNum += 1; //Increase one as to not fetch same block twice.
+            document.getElementById("BlockProcess").innerHTML = "Checking Block: " + blockNum;
+        }
 
-        const blocks = client.blockchain.getBlocks({ from: previousBlockNum, to: blockNum });
+        // Config starting block on all sequential passes.
+        else {
+            previousBlockNum += 1; //Increase one as to not fetch same block twice.
+
+            if (blockNum != previousBlockNum) document.getElementById("BlockProcess").innerHTML = "Checking Blocks: " + previousBlockNum + " - " + blockNum;
+            else document.getElementById("BlockProcess").innerHTML = "Checking Block: " + blockNum;
+        }
 
         // Iterate through each block since last processed block.
-        for await (const block of blocks) {
+        while (previousBlockNum <= blockNum) {
             if (stopBlockProcessing) return;
+
+            const block = await client.database.getBlock(previousBlockNum);
 
             // Look for any reward claims in each block.
             block.transactions.forEach(transaction => {
@@ -81,6 +89,8 @@ async function GetClaimedRewards() {
                     }
                 });
             });
+
+            previousBlockNum++;
         }
 
         previousBlockNum = blockNum;
