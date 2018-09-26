@@ -1,6 +1,6 @@
 {
   "name": "reward_fireworks",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Fireworks for claiming Steem reward payouts.",
   "main": "main.js",
   "dependencies": {
