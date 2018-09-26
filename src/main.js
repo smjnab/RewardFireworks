@@ -21,15 +21,10 @@ var previousBlockNum; //Track the last block used to make fireworks.
 var stopBlockProcessing; //Stop async block iteration.
 var getClaimedRewardsTimeout; //Stores timeout for block processing to find Claimed rewards.
 
-document.addEventListener("keyup", OnKeyUp); //Listen for ESC to start/stop block processing.
-
 Init();
 
 async function Init() {
     console.log("Init");
-
-    // Remove any pause message.
-    if (waitingForClaimsText != undefined) waitingForClaimsText.destroy();
 
     price = await client.database.getCurrentMedianHistoryPrice();
     rate = price.base.amount;
@@ -107,7 +102,7 @@ function StopBlockProcessing() {
 
     // Paused message.
     if (waitingForClaimsText != undefined) waitingForClaimsText.destroy();
-    waitingForClaimsText = phaser.add.text(windowWidth / 2, windowHeight / 3, "Paused... ESC or Click/Touch.", { fontSize: "16px", fill: "#FFF" });
+    waitingForClaimsText = phaser.add.text(windowWidth / 2, windowHeight / 3, "Paused... Interact to resume.", { fontSize: "16px", fill: "#FFF" });
     waitingForClaimsText.x -= waitingForClaimsText.width / 2;
 }
 
@@ -153,7 +148,7 @@ function Create() {
     phaser = this;
 
     // Initial waiting message
-    waitingForClaimsText = this.add.text(windowWidth / 2, windowHeight / 3, "Waiting for a reward claim...", { fontSize: "16px", fill: "#FFF" });
+    waitingForClaimsText = this.add.text(windowWidth / 2, windowHeight / 3, "Waiting for a reward claim...\n\nTired of waiting?\nTry claiming your own reward!", { fontSize: "16px", fill: "#FFF" });
     waitingForClaimsText.x -= waitingForClaimsText.width / 2;
 }
 
@@ -302,12 +297,3 @@ function RemoveExplosion(explosion, rocketName) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // USER EVENTS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function OnKeyUp(event) {
-    const key = event.keyCode ? event.keyCode : event.which;
-
-    if (key == 27) {
-        if (!stopBlockProcessing) StopBlockProcessing();
-        else Init();
-    }
-}

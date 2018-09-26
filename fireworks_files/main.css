@@ -6,6 +6,7 @@
 body {
     background: #000000;
     font-size: 14px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 #HTML5Div{
@@ -21,7 +22,7 @@ body {
 #CreatedBy{
     text-decoration: none;
     position: fixed;
-    color: #ffffff;
+    color: #9f9faf;
     left: 0px;
     padding: 6px 5px 0px 5px;
     font-style: italic;
@@ -37,7 +38,7 @@ body {
 #FormText{
     height: 14px;
     font-style: italic;
-    color: #909090;
+    color: #9f9faf;
 }
 
 #FormButton{
@@ -49,5 +50,5 @@ body {
     position: absolute;
     right:0px;
     padding: 6px 5px 0px 5px;
-    color: #ffffff;
+    color: #9f9faf;
 }
