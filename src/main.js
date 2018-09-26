@@ -180,7 +180,7 @@ function EmitterMaker(particle, particleSpeed, scaleMin, scaleMax, tint, rocketP
         },
         angle: { min: angelMin, max: angelMax },
         lifespan: lifespan,
-        gravityY: 70,
+        gravityY: 70 + numPart / 5,
         maxParticles: numPart
     });
 }
@@ -197,19 +197,18 @@ function FireRocket(accountName, rocketPower) {
     // Create a sparkling trail for rocket
     var trail = phaser.add.particles("white1px");
 
-    var sparks1 = EmitterMaker(trail, 100, 1, 0, 0xFFFFDD99, rocketPower, 45, 90, 500);
-    var sparks2 = EmitterMaker(trail, 120, 1.2, 0, 0xFFFFAF22, rocketPower, 45, 90, 500);
+    var sparks1 = EmitterMaker(trail, 80, 1, 0, 0xFFFFDD99, rocketPower, 45, 90, 500);
+    var sparks2 = EmitterMaker(trail, 100, 1.2, 0, 0xFFFFAF22, rocketPower, 45, 90, 500);
     sparks1.frequency = 50;
     sparks2.frequency = 50;
 
     // Determine speed to use, the bigger the reward, the higher the rocket goes.
     var velocity;
 
-    if (rocketPower < 150) velocity = 100 + rocketPower / 2;
-    else if (rocketPower < 500) velocity = 175 + parseFloat(rocketPower / 10);
-    else velocity = 275 + rocketPower / 10;
+    if (rocketPower <= 150) velocity = 125 + rocketPower / 2;
+    else velocity = 200 + rocketPower / 10;
 
-    if (velocity > 520) velocity = 520;
+    velocity = Math.min(velocity, Math.min(window.innerHeight * .65, 680));
 
     // Random direction
     var direction = Math.floor(Math.random() * 175) + 1;
@@ -248,6 +247,9 @@ function ExplodeRocket(rocket, trail, rocketPower, accountName) {
     rocketName.tint = colorArray[parseInt(Math.random() * 10)];
     rocketName.x -= rocketName.width / 2;
 
+    if (rocketName.x < 0) rocketName.x = 5;
+    else if (rocketName.x + rocketName.width > window.innerWidth) rocketName.x = rocketName.x - rocketName.width / 2 - 2;
+
     // Move the account name
     var moveLoopCount = 0;
 
@@ -276,19 +278,19 @@ function ExplodeRocket(rocket, trail, rocketPower, accountName) {
     ];
 
     var sparkArray = [
-        EmitterMaker(explosion, 90, 0.4, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower),
+        EmitterMaker(explosion, 60, 0.4, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower),
     ];
 
     // Bigger, more colorful explosion for increasingly larger reward claims.
-    if (rocketPower > 500) sparkArray.push(EmitterMaker(explosion, 95, 0.6, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 1000) sparkArray.push(EmitterMaker(explosion, 100, 0.8, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 2));
-    if (rocketPower > 3000) sparkArray.push(EmitterMaker(explosion, 105, 1, 3, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 3));
-    if (rocketPower > 6000) sparkArray.push(EmitterMaker(explosion, 115, 1.5, 3, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 6));
-    if (rocketPower > 10000) sparkArray.push(EmitterMaker(explosion, 125, 2, 4, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 10));
-    if (rocketPower > 15000) sparkArray.push(EmitterMaker(explosion, 120, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 15));
-    if (rocketPower > 25000) sparkArray.push(EmitterMaker(explosion, 115, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 25));
-    if (rocketPower > 50000) sparkArray.push(EmitterMaker(explosion, 125, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 50));
-    if (rocketPower > 100000) sparkArray.push(EmitterMaker(explosion, 110, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 100));
+    if (rocketPower > 500) sparkArray.push(EmitterMaker(explosion, 65, 0.6, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
+    if (rocketPower > 1000) sparkArray.push(EmitterMaker(explosion, 75, 0.8, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 2));
+    if (rocketPower > 3000) sparkArray.push(EmitterMaker(explosion, 90, 1, 3, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 3));
+    if (rocketPower > 6000) sparkArray.push(EmitterMaker(explosion, 105, 1.5, 3, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 6));
+    if (rocketPower > 10000) sparkArray.push(EmitterMaker(explosion, 120, 2, 4, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 10));
+    if (rocketPower > 15000) sparkArray.push(EmitterMaker(explosion, 115, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 15));
+    if (rocketPower > 25000) sparkArray.push(EmitterMaker(explosion, 110, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 25));
+    if (rocketPower > 50000) sparkArray.push(EmitterMaker(explosion, 100, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 50));
+    if (rocketPower > 100000) sparkArray.push(EmitterMaker(explosion, 130, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 100));
 
     setTimeout(StopExplosion, 750, sparkArray);
     setTimeout(RemoveExplosion, 4000, explosion, rocketName);
