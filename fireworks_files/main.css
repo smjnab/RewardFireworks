@@ -5,4 +5,49 @@
 
 body {
     background: #000000;
+    font-size: 14px;
+}
+
+#HTML5Div{
+    background: #000000;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 32px;
+    border-top: solid 1px #303040;
+}
+
+#CreatedBy{
+    text-decoration: none;
+    position: fixed;
+    color: #ffffff;
+    left: 0px;
+    padding: 6px 5px 0px 5px;
+    font-style: italic;
+}
+
+#RewardForm{
+    position: absolute;
+    text-align: center;
+    margin: auto;
+    width: 100%;
+}
+
+#FormText{
+    height: 14px;
+    font-style: italic;
+    color: #909090;
+}
+
+#FormButton{
+    height: 30px;
+    margin-top: 2px;
+}
+
+#BlockProcess{
+    position: absolute;
+    right:0px;
+    padding: 6px 5px 0px 5px;
+    color: #ffffff;
 }

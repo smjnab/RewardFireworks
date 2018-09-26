@@ -20,11 +20,8 @@ var rate;   //Sets conversion rate of 1 SBD in Steem.
 var previousBlockNum; //Track the last block used to make fireworks.
 var stopBlockProcessing; //Stop async block iteration.
 var getClaimedRewardsTimeout; //Stores timeout for block processing to find Claimed rewards.
-var blockNumText; //Text showing what block(s) are checked.
 
 document.addEventListener("keyup", OnKeyUp); //Listen for ESC to start/stop block processing.
-document.addEventListener("mouseup", OnMouseUp); //Listen for mouse to start/stop block processing.
-document.addEventListener("touchstart", OnMouseUp); //Listen for touch to start/stop block processing.
 
 Init();
 
@@ -53,11 +50,8 @@ async function GetClaimedRewards() {
 
     if (blockNum != previousBlockNum) {
         // Indicate what block(s) are processed at the moment.
-        if (blockNumText != undefined) blockNumText.destroy();
-        blockNumText = phaser.add.text(windowWidth, windowHeight - 16, "Checking Block(s): " + previousBlockNum + " - " + blockNum, { fontSize: "14px", fill: "#FFF" });
-        blockNumText.x -= blockNumText.width + 8;
-
-        console.log("Processing up to block: " + blockNum);
+        if (previousBlockNum == 0 || previousBlockNum == blockNum) document.getElementById("BlockProcess").innerHTML = "Checking Block: " + blockNum;
+        else document.getElementById("BlockProcess").innerHTML = "Checking Blocks: " + previousBlockNum + " - " + blockNum;
 
         if (previousBlockNum == 0) previousBlockNum = blockNum; //On first pass fetch the current block.
         else previousBlockNum += 1; //Increase one as to not fetch same block twice.
@@ -123,7 +117,7 @@ function StopBlockProcessing() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var windowWidth = window.innerWidth;
-var windowHeight = window.innerHeight;
+var windowHeight = window.innerHeight - 32;
 var phaser;
 var waitingForClaimsText;
 
@@ -142,7 +136,8 @@ var config = {
     scene: {
         preload: Preload,
         create: Create
-    }
+    },
+    parent: "PhaserDiv"
 };
 
 var game = new Phaser.Game(config);
@@ -158,7 +153,7 @@ function Create() {
     phaser = this;
 
     // Initial waiting message
-    waitingForClaimsText = phaser.add.text(windowWidth / 2, windowHeight / 3, "Waiting for a reward claim...", { fontSize: "16px", fill: "#FFF" });
+    waitingForClaimsText = this.add.text(windowWidth / 2, windowHeight / 3, "Waiting for a reward claim...", { fontSize: "16px", fill: "#FFF" });
     waitingForClaimsText.x -= waitingForClaimsText.width / 2;
 }
 
@@ -166,7 +161,7 @@ function Resize() {
     var canvas = document.querySelector("canvas");
 
     windowWidth = window.innerWidth;
-    windowHeight = window.innerHeight;
+    windowHeight = window.innerHeight - 32;
 
     canvas.style.width = windowWidth + "px";
     canvas.style.height = windowHeight + "px";
@@ -315,9 +310,4 @@ function OnKeyUp(event) {
         if (!stopBlockProcessing) StopBlockProcessing();
         else Init();
     }
-}
-
-function OnMouseUp(event) {
-    if (!stopBlockProcessing) StopBlockProcessing();
-    else Init();
 }

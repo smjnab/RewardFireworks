@@ -14,8 +14,17 @@
 </head>
 
 <body>
-
     <!-- Phaser App -->
+    <div id="PhaserDiv"></div>
+
+    <!-- Regular HTML5 -->
+    <div id="HTML5Div">
+        <span id="CreatedBy">Created by @smjn</span>
+        <span id="RewardForm"><input id="FormText" type="text" name="name" value="Username">
+            <input id="FormButton" type="button" name="claim" value="Claim Reward">
+        </span>
+        <span id="BlockProcess"></span>
+    </div>
 
     <!-- Load Scripts -->
     <script src="fireworks_files/bundle.js"></script>
