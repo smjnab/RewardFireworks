@@ -44,26 +44,17 @@ async function GetClaimedRewards() {
     const blockNum = await client.blockchain.getCurrentBlockNum();
 
     if (blockNum != previousBlockNum) {
-        // Config starting block on the first pass.
-        if (previousBlockNum == 0) {
-            previousBlockNum = blockNum; //On first pass fetch the current block.
-
-            document.getElementById("BlockProcess").innerHTML = "Checking Block: " + blockNum;
-        }
-
-        // Config starting block on all sequential passes.
-        else {
-            previousBlockNum += 1; //Increase one as to not fetch same block twice.
-
-            if (blockNum != previousBlockNum) document.getElementById("BlockProcess").innerHTML = "Checking Blocks: " + previousBlockNum + " - " + blockNum;
-            else document.getElementById("BlockProcess").innerHTML = "Checking Block: " + blockNum;
-        }
+        // Config starting block for each pass.
+        if (previousBlockNum == 0) previousBlockNum = blockNum; //On first pass fetch the current block.
+        else previousBlockNum += 1; //Increase one as to not fetch same block twice.
 
         // Iterate through each block since last processed block.
         while (previousBlockNum <= blockNum) {
             if (stopBlockProcessing) return;
 
             const block = await client.database.getBlock(previousBlockNum);
+
+            document.getElementById("BlockProcess").innerHTML = "Checking Block: " + previousBlockNum;
 
             // Look for any reward claims in each block.
             block.transactions.forEach(transaction => {
