@@ -18,7 +18,6 @@ const spToVest = 2021; //Lazy, could not recall how this is actually calculated.
 var price;  //Sets the median price of SBD.
 var rate;   //Sets conversion rate of 1 SBD in Steem.
 var previousBlockNum; //Track the last block used to make fireworks.
-var stopBlockProcessing; //Stop async block iteration.
 var getClaimedRewardsTimeout; //Stores timeout for block processing to find Claimed rewards.
 var showCurrentBlock = true;
 
@@ -30,7 +29,6 @@ async function Init() {
     price = await client.database.getCurrentMedianHistoryPrice();
     rate = price.base.amount;
     previousBlockNum = 0;
-    stopBlockProcessing = false;
 
     GetClaimedRewards();
 }
@@ -51,8 +49,6 @@ async function GetClaimedRewards() {
 
         // Iterate through each block since last processed block.
         while (previousBlockNum <= blockNum) {
-            if (stopBlockProcessing) return;
-
             const block = await client.database.getBlock(previousBlockNum);
 
             if (showCurrentBlock) document.getElementById("BlockProcess").innerHTML = "Checking Block: " + previousBlockNum;
@@ -96,25 +92,13 @@ async function GetClaimedRewards() {
     else getClaimedRewardsTimeout = setTimeout(GetClaimedRewards, 0);
 }
 
-function StopBlockProcessing() {
-    console.log("Stopped.");
-
-    clearTimeout(getClaimedRewardsTimeout);
-    stopBlockProcessing = true;
-
-    // Paused message.
-    if (waitingForClaimsText != undefined) waitingForClaimsText.destroy();
-    waitingForClaimsText = phaser.add.text(windowWidth / 2, windowHeight / 3, "Paused... Interact to resume.", { fontSize: "16px", fill: "#FFF" });
-    waitingForClaimsText.x -= waitingForClaimsText.width / 2;
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PHASER BASE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var windowWidth = window.innerWidth;
-var windowHeight = window.innerHeight - 32;
+var windowHeight = window.innerHeight - 36;
 var phaser;
 var waitingForClaimsText;
 
@@ -158,7 +142,7 @@ function Resize() {
     var canvas = document.querySelector("canvas");
 
     windowWidth = window.innerWidth;
-    windowHeight = window.innerHeight - 32;
+    windowHeight = window.innerHeight - 36;
 
     canvas.style.width = windowWidth + "px";
     canvas.style.height = windowHeight + "px";
@@ -208,7 +192,7 @@ function FireRocket(accountName, rocketPower) {
     if (rocketPower <= 150) velocity = 125 + rocketPower / 2;
     else velocity = 200 + rocketPower / 10;
 
-    velocity = Math.min(velocity, Math.min(window.innerHeight * .65, 680));
+    velocity = Math.min(velocity, Math.min(window.innerHeight * .62, 600));
 
     // Random direction
     var direction = Math.floor(Math.random() * 175) + 1;
@@ -316,11 +300,65 @@ function RemoveExplosion(explosion, rocketName) {
 // USER EVENTS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Get username.
+document.getElementById("FormButton").onclick = () => {
+    document.getElementById("FormButton").disabled = true;
+
+    var username = document.getElementById("FormText").value;
+
+    username = username.substring(0, 16);
+    username = username.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "-");
+
+    GetAccountRewards(username);
+};
+
+// Using enter key instead of button to get username.
+document.getElementById("FormText").addEventListener("keyup", keyUp => {
+    keyUp.preventDefault();
+
+    if (keyUp.keyCode === 13) {
+        document.getElementById("FormButton").onclick();
+    }
+});
+
+// Get steem account and check for rewards.
+async function GetAccountRewards(username) {
+    const account = await client.database.getAccounts([username])
+
+    if (waitingForClaimsText != undefined) waitingForClaimsText.destroy();
+    waitingForClaimsText = phaser.add.text(windowWidth / 2, windowHeight / 3, "Checking for rewards...", { fontSize: "16px", fill: "#FFF" });
+    waitingForClaimsText.x -= waitingForClaimsText.width / 2;
+
+    if (account.length > 0) {
+        if (waitingForClaimsText != undefined) waitingForClaimsText.destroy();
+
+        const steemReward = encodeURIComponent(account[0].reward_steem_balance);
+        const sbdReward = encodeURIComponent(account[0].reward_sbd_balance);
+        const vestReward = encodeURIComponent(account[0].reward_vesting_balance);
+        const redirect = encodeURIComponent(window.location.href);
+        const url = `https://steemconnect.com/sign/claim-reward-balance?account=${username}&reward_steem=${steemReward}&reward_sbd=${sbdReward}&reward_vests=${vestReward}&redirect_uri=${redirect}`;
+
+        // Re-direct user to Steem Connect, user will get re-directed back after transaction created.
+        window.location.href = url;
+    }
+}
+
+// Remove placeholder text for input field.
+document.getElementById("FormText").onfocus = () => {
+    document.getElementById("FormButton").disabled = false;
+    document.getElementById("FormText").placeholder = "";
+    document.getElementById("FormText").style.color = "#000000";
+    document.getElementById("FormText").style.fontStyle = "normal";
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// HTML TWEAKs
+// HTML TWEAKS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 FitWidth();
+
+// Remove created by and block info when screen too narrow.
 function FitWidth() {
     if (window.innerWidth < 640) {
         showCurrentBlock = false;

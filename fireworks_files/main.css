@@ -15,8 +15,11 @@ body {
     bottom: 0px;
     left: 0px;
     right: 0px;
-    height: 32px;
+    height: 36px;
     border-top: solid 1px #303040;
+    margin: auto;
+    width: 100%;
+    text-align: center;
 }
 
 #CreatedBy{
@@ -30,20 +33,27 @@ body {
 
 #RewardForm{
     position: absolute;
-    text-align: center;
-    margin: auto;
-    width: 100%;
+    width: 260px;
 }
 
 #FormText{
-    height: 14px;
+   position: relative;
     font-style: italic;
     color: #9f9faf;
+    top: 2px;
+    width:120px;
+    left:-130px;
+    height: 20px;
+    font-size: 100%;
 }
 
 #FormButton{
+    position: relative;
     height: 30px;
-    margin-top: 2px;
+    width: 120px;
+    font-size: 100%;
+    top: 4px;
+    left:-130px;
 }
 
 #BlockProcess{

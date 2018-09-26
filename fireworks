@@ -19,9 +19,10 @@
 
     <!-- Regular HTML5 -->
     <div id="HTML5Div">
-        <span id="CreatedBy">Created by @smjn</span>
+        <span id="CreatedBy"></span>
         <span id="RewardForm">
-            <input id="FormText" type="text" name="name" value="Username" autocomplete="off">
+            <input id="FormText" type="text" name="name" minlength="3" maxlength="16" placeholder="Username"
+                autocomplete="off">
             <button id="FormButton" name="claim">Claim Reward</button>
         </span>
         <span id="BlockProcess"></span>
