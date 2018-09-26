@@ -20,6 +20,7 @@ var rate;   //Sets conversion rate of 1 SBD in Steem.
 var previousBlockNum; //Track the last block used to make fireworks.
 var stopBlockProcessing; //Stop async block iteration.
 var getClaimedRewardsTimeout; //Stores timeout for block processing to find Claimed rewards.
+var showCurrentBlock = true;
 
 Init();
 
@@ -54,7 +55,7 @@ async function GetClaimedRewards() {
 
             const block = await client.database.getBlock(previousBlockNum);
 
-            document.getElementById("BlockProcess").innerHTML = "Checking Block: " + previousBlockNum;
+            if (showCurrentBlock) document.getElementById("BlockProcess").innerHTML = "Checking Block: " + previousBlockNum;
 
             // Look for any reward claims in each block.
             block.transactions.forEach(transaction => {
@@ -161,6 +162,8 @@ function Resize() {
 
     canvas.style.width = windowWidth + "px";
     canvas.style.height = windowHeight + "px";
+
+    FitWidth();
 }
 
 // Simplify particle creation.
@@ -209,7 +212,7 @@ function FireRocket(accountName, rocketPower) {
     if (velocity > 520) velocity = 520;
 
     // Random direction
-    var direction = Math.floor(Math.random() * 150) + 1;
+    var direction = Math.floor(Math.random() * 175) + 1;
     direction *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
 
     // Create rocket and position it in the bottom center of screen.
@@ -273,21 +276,21 @@ function ExplodeRocket(rocket, trail, rocketPower, accountName) {
     ];
 
     var sparkArray = [
-        EmitterMaker(explosion, 95, 0.4, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower),
+        EmitterMaker(explosion, 90, 0.4, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower),
     ];
 
     // Bigger, more colorful explosion for increasingly larger reward claims.
-    if (rocketPower > 300) sparkArray.push(EmitterMaker(explosion, 105, 0.6, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 750) sparkArray.push(EmitterMaker(explosion, 115, 0.8, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 1500) sparkArray.push(EmitterMaker(explosion, 125, 1, 3, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 3000) sparkArray.push(EmitterMaker(explosion, 150, 1.5, 3, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 6000) sparkArray.push(EmitterMaker(explosion, 160, 2, 4, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 10000) sparkArray.push(EmitterMaker(explosion, 145, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 15000) sparkArray.push(EmitterMaker(explosion, 155, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 25000) sparkArray.push(EmitterMaker(explosion, 125, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
-    if (rocketPower > 50000) sparkArray.push(EmitterMaker(explosion, 115, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
+    if (rocketPower > 500) sparkArray.push(EmitterMaker(explosion, 95, 0.6, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower));
+    if (rocketPower > 1000) sparkArray.push(EmitterMaker(explosion, 100, 0.8, 2, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 2));
+    if (rocketPower > 3000) sparkArray.push(EmitterMaker(explosion, 105, 1, 3, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 3));
+    if (rocketPower > 6000) sparkArray.push(EmitterMaker(explosion, 115, 1.5, 3, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 6));
+    if (rocketPower > 10000) sparkArray.push(EmitterMaker(explosion, 125, 2, 4, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 10));
+    if (rocketPower > 15000) sparkArray.push(EmitterMaker(explosion, 120, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 15));
+    if (rocketPower > 25000) sparkArray.push(EmitterMaker(explosion, 115, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 25));
+    if (rocketPower > 50000) sparkArray.push(EmitterMaker(explosion, 125, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 50));
+    if (rocketPower > 100000) sparkArray.push(EmitterMaker(explosion, 110, 2.5, 4.5, colorArraySparks[parseInt(Math.random() * 10)], rocketPower / 100));
 
-    setTimeout(StopExplosion, 800, sparkArray);
+    setTimeout(StopExplosion, 750, sparkArray);
     setTimeout(RemoveExplosion, 4000, explosion, rocketName);
 
     rocket.destroy();
@@ -310,3 +313,19 @@ function RemoveExplosion(explosion, rocketName) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // USER EVENTS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// HTML TWEAKs
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+FitWidth();
+function FitWidth() {
+    if (window.innerWidth < 640) {
+        showCurrentBlock = false;
+        document.getElementById("CreatedBy").innerHTML = "";
+        document.getElementById("BlockProcess").innerHTML = "";
+    } else {
+        showCurrentBlock = true;
+        document.getElementById("CreatedBy").innerHTML = "Created by @smjn";
+    }
+}
